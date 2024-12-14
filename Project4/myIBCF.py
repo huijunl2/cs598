@@ -4,7 +4,7 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
-rating_matrix = pd.read_csv('I-w9Wo-HSzmUGNNHw0pCzg_bc290b0e6b3a45c19f62b1b82b1699f1_Rmat.csv', sep=',')
+rating_matrix = pd.read_csv('Project4/I-w9Wo-HSzmUGNNHw0pCzg_bc290b0e6b3a45c19f62b1b82b1699f1_Rmat.csv', sep=',')
 
 def calculate_movie_popularity_scores():
     movie_metrics = {}
@@ -28,7 +28,7 @@ class MovieDatabase:
     def _load_movies(self):
         """Load all movies into memory once"""
         try:
-            with open('ml-1m/movies.dat', 'r', encoding='ISO-8859-1') as f:
+            with open('Project4/ml-1m/movies.dat', 'r', encoding='ISO-8859-1') as f:
                 for line in f:
                     id_str, title_str, _ = line.split("::")
                     self._movies[id_str] = title_str.strip()
