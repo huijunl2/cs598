@@ -142,10 +142,8 @@ def get_popular_movie_ratings():
     return movie_rating_stats['weighted_rating'].sort_values(ascending=False)
 
 def myIBCF(user_ratings, num_recommendations=10):
-
     working_similarities = S_filtered.copy()
     user_rating_vector = pd.Series(user_ratings)
-
     rated_movie_mask = ~user_rating_vector.isna()
 
     rating_predictions = {}
@@ -165,10 +163,13 @@ def myIBCF(user_ratings, num_recommendations=10):
     prediction_series = pd.Series(rating_predictions).sort_values(ascending=False)
 
     if len(prediction_series) < num_recommendations:
-        print("Backfilling with popular movies...")
-        popular_movie_ratings = get_popular_movie_ratings()
-        unrated_popular_movies = popular_movie_ratings[~rated_movie_mask]
+        popular_movies = calculate_movie_popularity_scores()
+        popular_movies = popular_movies[~popular_movies.index.isin(user_rating_vector.dropna().index)]
+        popular_movies = popular_movies.sort_values('popularity_score', ascending=False)
+        
         needed_recommendations = num_recommendations - len(prediction_series)
-        prediction_series = pd.concat([prediction_series, unrated_popular_movies[:needed_recommendations]])
+        backfill_recommendations = popular_movies['movie_id'][:needed_recommendations]
+        
+        prediction_series = pd.concat([prediction_series, pd.Series([0] * len(backfill_recommendations), index=backfill_recommendations)])
 
     return prediction_series[:num_recommendations]
